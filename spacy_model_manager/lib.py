@@ -163,7 +163,7 @@ def list_spacy_models() -> int:
 
 
 def install_spacy_model(
-    model: str, version: Optional[str] = None, upgrade=False
+    model: str, version: Optional[str] = None, upgrade: bool = False
 ) -> int:
     """
     Install a given spaCy model
@@ -182,7 +182,7 @@ def install_spacy_model(
         )
         click.echo(
             click.style(
-                f"Please specify a version or run `ratom model --upgrade {model}` to upgrade to the latest version",
+                f"Please specify a version or run `spacy-model upgrade {model}` to upgrade to the latest version",
                 fg="blue",
             )
         )

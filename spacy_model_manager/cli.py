@@ -68,7 +68,7 @@ def install(model, model_version):
     Install <model>.
     """
 
-    status = install_spacy_model(install, version=model_version, upgrade=False)
+    status = install_spacy_model(model, version=model_version, upgrade=False)
     sys.exit(status)
 
 
@@ -79,5 +79,5 @@ def upgrade(model):
     Upgrade <model>.
     """
 
-    status = install_spacy_model(install, version=None, upgrade=True)
+    status = install_spacy_model(model, version=None, upgrade=True)
     sys.exit(status)
