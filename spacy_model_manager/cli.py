@@ -1,8 +1,16 @@
+# pylint: disable=unused-argument
+
+import re
 import sys
+from typing import Optional
 
 import click
 
-from spacy_model_manager.lib import SPACY_MODEL_NAMES
+from spacy_model_manager.lib import (
+    SPACY_MODEL_NAMES,
+    install_spacy_model,
+    list_spacy_models,
+)
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
@@ -10,6 +18,22 @@ PATH_METAVAR = "<path>"
 INT_METAVAR = "<n>"
 VERSION_METAVAR = "<version>"
 MODEL_METAVAR = "<model>"
+
+
+def validate_version_string(ctx, param, value: Optional[str]) -> Optional[str]:
+    """
+    Callback for click commands that checks that version string is valid
+    """
+
+    if value is None:
+        return None
+
+    version_pattern = re.compile(r"\d+(?:\.\d+)+")
+
+    if not version_pattern.match(value):
+        raise click.BadParameter(value)
+
+    return value
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -23,26 +47,37 @@ def spacy_model():
 @spacy_model.command("list", context_settings=CONTEXT_SETTINGS)
 def _list():
     """
-    List installed and available spaCy models and their versions.
+    List installed and available models.
     """
 
-    sys.exit()
+    status = list_spacy_models()
+    sys.exit(status)
 
 
 @spacy_model.command(context_settings=CONTEXT_SETTINGS)
-@click.argument('model', metavar=MODEL_METAVAR, type=click.Choice(SPACY_MODEL_NAMES),)
-def install(model):
+@click.argument("model", metavar=MODEL_METAVAR, type=click.Choice(SPACY_MODEL_NAMES))
+@click.option(
+    "--model-version",
+    required=False,
+    metavar=VERSION_METAVAR,
+    callback=validate_version_string,
+    help="Install a given version.",
+)
+def install(model, model_version):
     """
-    Install <model>
+    Install <model>.
     """
 
-    sys.exit()
+    status = install_spacy_model(install, version=model_version, upgrade=False)
+    sys.exit(status)
 
 
 @spacy_model.command(context_settings=CONTEXT_SETTINGS)
-def upgrade():
+@click.argument("model", metavar=MODEL_METAVAR, type=click.Choice(SPACY_MODEL_NAMES))
+def upgrade(model):
     """
-    List installed and available spaCy models and their versions.
+    Upgrade <model>.
     """
 
-    sys.exit()
+    status = install_spacy_model(install, version=None, upgrade=True)
+    sys.exit(status)
