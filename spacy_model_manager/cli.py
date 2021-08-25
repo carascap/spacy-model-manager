@@ -10,6 +10,7 @@ from spacy_model_manager.lib import (
     SPACY_MODEL_NAMES,
     install_spacy_model,
     list_spacy_models,
+    uninstall_spacy_model,
 )
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -80,4 +81,15 @@ def upgrade(model):
     """
 
     status = install_spacy_model(model, version=None, upgrade=True)
+    sys.exit(status)
+
+
+@spacy_model.command(context_settings=CONTEXT_SETTINGS)
+@click.argument("model", metavar=MODEL_METAVAR, type=click.Choice(SPACY_MODEL_NAMES))
+def remove(model):
+    """
+    Uninstall <model>.
+    """
+
+    status = uninstall_spacy_model(model)
     sys.exit(status)

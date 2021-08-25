@@ -1,6 +1,7 @@
 # pylint: disable=import-outside-toplevel,broad-except
 
 import json
+import sys
 from collections import namedtuple
 from importlib import reload
 from typing import Dict, List, Optional
@@ -10,6 +11,7 @@ import pkg_resources
 import requests
 import spacy
 from packaging.version import parse
+from spacy.util import run_command
 from tabulate import tabulate
 
 # Spacy trained model names
@@ -194,7 +196,9 @@ def install_spacy_model(
     version_suffix, direct_download = (f"-{version}", True) if version else ("", False)
 
     try:
-        spacy.cli.download(f"{model}{version_suffix}", direct_download, "--quiet")
+        spacy.cli.download(
+            f"{model}{version_suffix}", direct_download, False, "--quiet"
+        )
     except SystemExit:
         click.echo(
             click.style(
@@ -231,4 +235,21 @@ def install_spacy_model(
     click.echo(
         click.style(f"✔ Installed {model}, version {installed_version}", fg="green")
     )
+    return 0
+
+
+def uninstall_spacy_model(model: str) -> int:
+    """
+    Uninstall a given spaCy model
+    """
+
+    try:
+        run_command([sys.executable, "-m", "pip", "uninstall", model])
+    except SystemExit:
+        click.echo(
+            click.style(f"❌ Unable to remove spacy model {model}", fg="red"),
+            err=True,
+        )
+        return -1
+
     return 0
