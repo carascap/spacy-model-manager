@@ -1,4 +1,16 @@
+# pylint: disable=import-outside-toplevel,broad-except
+
+import json
 from collections import namedtuple
+from importlib import reload
+from typing import Dict, List, Optional
+
+import click
+import pkg_resources
+import requests
+import spacy
+from packaging.version import parse
+from tabulate import tabulate
 
 # Spacy trained model names
 SPACY_MODEL_NAMES = [
@@ -78,3 +90,145 @@ SPACY_MODEL_NAMES = [
 ]
 
 SPACY_MODELS = namedtuple("SpacyModels", SPACY_MODEL_NAMES)(*SPACY_MODEL_NAMES)
+
+
+def get_installed_model_version(name: str) -> Optional[str]:
+    """
+    Return the version of an installed package
+    """
+
+    try:
+        return pkg_resources.get_distribution(name).version
+    except pkg_resources.DistributionNotFound:
+        return None
+
+
+def get_spacy_models() -> Dict[str, List[str]]:
+    """
+    Get all versions of spaCy models from github
+    """
+
+    releases = {}
+
+    paginated_url = "https://api.github.com/repos/explosion/spacy-models/releases?page=1&per_page=100"
+
+    try:
+        while paginated_url:
+            response = requests.get(url=paginated_url)
+
+            if not response.ok:
+                response.raise_for_status()
+
+            # Get name-version pairs
+            for release in json.loads(response.content):
+                name, version = release["tag_name"].split("-", maxsplit=1)
+
+                # Skip alpha/beta versions
+                if "a" in version or "b" in version:
+                    continue
+
+                releases[name] = [*releases.get(name, []), version]
+
+            # Get the next page of results
+            try:
+                paginated_url = response.links["next"]["url"]
+            except (AttributeError, KeyError):
+                break
+
+    except requests.HTTPError:
+        releases = {name: [] for name in SPACY_MODEL_NAMES}
+
+    return releases
+
+
+def list_spacy_models() -> int:
+    """
+    Print installed spaCy models
+    """
+
+    releases = get_spacy_models()
+
+    # Sort the results by version name
+    releases = list(releases.items())
+    releases.sort(key=lambda x: x[0])
+
+    table = [["spaCy model", "installed version", "available versions"]]
+
+    for name, versions in releases:
+        table.append([name, get_installed_model_version(name), ", ".join(versions)])
+
+    print(tabulate(table, headers="firstrow"))
+
+    return 0
+
+
+def install_spacy_model(
+    model: str, version: Optional[str] = None, upgrade=False
+) -> int:
+    """
+    Install a given spaCy model
+    """
+    from spacy.cli.download import msg as spacy_msg
+
+    # Check for existing version
+    installed_version = get_installed_model_version(model)
+
+    if not version and not upgrade and installed_version:
+        click.echo(
+            click.style(
+                f"Model {model} already installed, version {installed_version}",
+                fg="blue",
+            )
+        )
+        click.echo(
+            click.style(
+                f"Please specify a version or run `ratom model --upgrade {model}` to upgrade to the latest version",
+                fg="blue",
+            )
+        )
+        return 0
+
+    # Download quietly
+    spacy_msg.no_print = True
+
+    version_suffix, direct_download = (f"-{version}", True) if version else ("", False)
+
+    try:
+        spacy.cli.download(f"{model}{version_suffix}", direct_download, "--quiet")
+    except SystemExit:
+        click.echo(
+            click.style(
+                f"❌ Unable to install spacy model {model}{version_suffix}", fg="red"
+            ),
+            err=True,
+        )
+        return -1
+
+    # Confirm installation
+    try:
+        reload(pkg_resources)
+        installed_version = pkg_resources.get_distribution(model).version
+
+    except Exception as exc:
+        click.echo(
+            click.style(
+                f"❌ Unable to confirm model installation, error: {exc}", fg="red"
+            ),
+            err=True,
+        )
+        return -1
+
+    if version and parse(version) != parse(installed_version):
+        click.echo(
+            click.style(
+                f"❌ Installed model version {installed_version} and specified version {version} differ",
+                fg="red",
+            ),
+            err=True,
+        )
+        return -1
+
+    click.echo(
+        click.style(f"✔ Installed {model}, version {installed_version}", fg="green")
+    )
+    return 0

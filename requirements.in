@@ -1,2 +1,5 @@
 click
 pbr
+requests
+spacy
+tabulate
