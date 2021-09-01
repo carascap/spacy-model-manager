@@ -4,4 +4,9 @@ isort
 pip-tools
 pylint
 pytest
+pytest-benchmark
+pytest-cov
+pytest-mock
+pytest-sugar
+pytest-click
 tox

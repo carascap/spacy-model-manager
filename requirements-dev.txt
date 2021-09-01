@@ -4,15 +4,13 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in requirements.in
 #
-appdirs==1.4.4
-    # via black
-astroid==2.7.2
+astroid==2.7.3
     # via pylint
 attrs==21.2.0
     # via pytest
 backports.entry-points-selectable==1.1.0
     # via virtualenv
-black==21.7b0
+black==21.8b0
     # via -r requirements-dev.in
 blis==0.7.4
     # via
@@ -32,7 +30,10 @@ click==7.1.2
     #   -r requirements.in
     #   black
     #   pip-tools
+    #   pytest-click
     #   typer
+coverage==5.5
+    # via pytest-cov
 cymem==2.0.5
     # via
     #   preshed
@@ -79,6 +80,7 @@ numpy==1.21.2
 packaging==21.0
     # via
     #   pytest
+    #   pytest-sugar
     #   spacy
     #   tox
 pathspec==0.9.0
@@ -91,11 +93,12 @@ pep517==0.11.0
     # via pip-tools
 pip-tools==6.2.0
     # via -r requirements-dev.in
-platformdirs==2.2.0
+platformdirs==2.3.0
     # via
+    #   black
     #   pylint
     #   virtualenv
-pluggy==0.13.1
+pluggy==1.0.0
     # via
     #   pytest
     #   tox
@@ -107,6 +110,8 @@ py==1.10.0
     # via
     #   pytest
     #   tox
+py-cpuinfo==8.0.0
+    # via pytest-benchmark
 pycodestyle==2.7.0
     # via flake8
 pydantic==1.8.2
@@ -119,9 +124,25 @@ pylint==2.10.2
     # via -r requirements-dev.in
 pyparsing==2.4.7
     # via packaging
-pytest==6.2.4
+pytest==6.2.5
+    # via
+    #   -r requirements-dev.in
+    #   pytest-benchmark
+    #   pytest-click
+    #   pytest-cov
+    #   pytest-mock
+    #   pytest-sugar
+pytest-benchmark==3.4.1
     # via -r requirements-dev.in
-regex==2021.8.21
+pytest-click==1.0.2
+    # via -r requirements-dev.in
+pytest-cov==2.12.1
+    # via -r requirements-dev.in
+pytest-mock==3.6.1
+    # via -r requirements-dev.in
+pytest-sugar==0.9.4
+    # via -r requirements-dev.in
+regex==2021.8.28
     # via black
 requests==2.26.0
     # via
@@ -131,7 +152,7 @@ six==1.16.0
     # via
     #   tox
     #   virtualenv
-smart-open==5.2.0
+smart-open==5.2.1
     # via pathy
 spacy==3.1.2
     # via -r requirements.in
@@ -143,12 +164,15 @@ srsly==2.4.1
     #   thinc
 tabulate==0.8.9
     # via -r requirements.in
+termcolor==1.1.0
+    # via pytest-sugar
 thinc==8.0.8
     # via spacy
 toml==0.10.2
     # via
     #   pylint
     #   pytest
+    #   pytest-cov
     #   tox
 tomli==1.2.1
     # via
@@ -162,8 +186,10 @@ typer==0.3.2
     # via
     #   pathy
     #   spacy
-typing-extensions==3.10.0.0
-    # via pydantic
+typing-extensions==3.10.0.2
+    # via
+    #   black
+    #   pydantic
 urllib3==1.26.6
     # via requests
 virtualenv==20.7.2

@@ -244,7 +244,7 @@ def uninstall_spacy_model(model: str) -> int:
     """
 
     try:
-        run_command([sys.executable, "-m", "pip", "uninstall", model])
+        run_command([sys.executable, "-m", "pip", "uninstall", "--yes", model])
     except SystemExit:
         click.echo(
             click.style(f"❌ Unable to remove spacy model {model}", fg="red"),
