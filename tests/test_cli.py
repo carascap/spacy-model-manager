@@ -3,18 +3,13 @@
 from contextlib import contextmanager
 from pathlib import Path
 from typing import List, Optional, Union
-from unittest.mock import MagicMock, patch
 
 import click
 import pytest
 from click.testing import CliRunner, Result
 
 import spacy_model_manager
-from spacy_model_manager.cli import (
-    install_spacy_model,
-    spacy_model,
-    validate_version_string,
-)
+from spacy_model_manager.cli import spacy_model, validate_version_string
 from spacy_model_manager.lib import SPACY_MODELS
 
 TEST_MODEL = SPACY_MODELS.en_core_web_sm
@@ -38,7 +33,7 @@ class Expected:
             setattr(self, key, value)
 
 
-def run_command(
+def run_spacy_model_command(
     cmd: Optional[str],
     options: Optional[List[str]],
     args: Union[Path, str, None],
@@ -106,7 +101,7 @@ def run_command(
     ],
 )
 def test_spacy_model(cli_runner, cmd, options, expected):
-    run_command(cmd, options, None, cli_runner, expected)
+    run_spacy_model_command(cmd, options, None, cli_runner, expected)
 
 
 @pytest.mark.parametrize(
@@ -124,9 +119,3 @@ def test_spacy_model(cli_runner, cmd, options, expected):
 def test_validate_version_string(value, context):
     with context:
         assert validate_version_string(None, None, value) == value
-
-
-def test_install_spacy_model():
-    with patch("spacy.cli.download", new=MagicMock(side_effect=SystemExit)):
-        # Pick a model not yet installed so spaCy tries to download it
-        assert install_spacy_model(SPACY_MODELS.zh_core_web_sm) == -1
