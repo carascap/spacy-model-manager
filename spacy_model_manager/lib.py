@@ -16,9 +16,14 @@ from tabulate import tabulate
 
 # Spacy trained model names
 SPACY_MODEL_NAMES = [
+    "ca_core_news_lg",
+    "ca_core_news_md",
+    "ca_core_news_sm",
+    "ca_core_news_trf",
     "da_core_news_lg",
     "da_core_news_md",
     "da_core_news_sm",
+    "da_core_news_trf",
     "de_core_news_lg",
     "de_core_news_md",
     "de_core_news_sm",
