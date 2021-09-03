@@ -13,6 +13,11 @@ from spacy_model_manager.lib import (
 )
 
 
+def test_get_spacy_models():
+    models = get_spacy_models().keys()
+    assert len(models) == len(SPACY_MODELS)
+
+
 def test_get_spacy_models_with_request_error():
     with patch("requests.get") as mock_get:
         mock_get.return_value.ok = False
