@@ -14,7 +14,12 @@ from spacy_model_manager.lib import (
 
 
 def test_get_spacy_models_with_request_error():
-    with patch("requests.get", new=MagicMock(side_effect=requests.HTTPError)):
+    with patch("requests.get") as mock_get:
+        mock_get.return_value.ok = False
+        mock_get.return_value.raise_for_status = MagicMock(
+            side_effect=requests.HTTPError
+        )
+
         assert get_spacy_models() == {name: [] for name in SPACY_MODEL_NAMES}
 
 
