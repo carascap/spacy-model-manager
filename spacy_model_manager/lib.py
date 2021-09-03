@@ -132,6 +132,8 @@ def get_spacy_models() -> Dict[str, List[str]]:
 
                 # Skip alpha/beta versions
                 if "a" in version or "b" in version:
+                    # pragma: nocover
+                    # https://github.com/nedbat/coveragepy/issues/198
                     continue
 
                 releases[name] = [*releases.get(name, []), version]
