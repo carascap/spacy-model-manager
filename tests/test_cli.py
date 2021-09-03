@@ -96,6 +96,11 @@ def run_spacy_model_command(
             ),
         ),
         ("install", [TEST_MODEL], Expected(status=0, tokens=["Installed", TEST_MODEL])),
+        (
+            "install",
+            [TEST_MODEL],
+            Expected(status=0, tokens=[f"Model {TEST_MODEL} already installed"]),
+        ),
         ("upgrade", [TEST_MODEL], Expected(status=0, tokens=["Installed", TEST_MODEL])),
         ("remove", [TEST_MODEL], Expected(status=0, tokens=[])),
     ],
