@@ -1,8 +1,7 @@
 # pylint: disable=too-few-public-methods,missing-function-docstring
 
 from contextlib import contextmanager
-from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import click
 import pytest
@@ -36,7 +35,7 @@ class Expected:
 def run_spacy_model_command(
     cmd: Optional[str],
     options: Optional[List[str]],
-    args: Union[Path, str, None],
+    args: Optional[str],
     runner: CliRunner,
     expected: Optional[Expected],
 ) -> Result:
@@ -48,7 +47,7 @@ def run_spacy_model_command(
     command.extend(options or [])
 
     if args:
-        command.append(str(args))
+        command.append(args)
 
     result = runner.invoke(spacy_model, command)
 
@@ -62,51 +61,83 @@ def run_spacy_model_command(
 
 
 @pytest.mark.parametrize(
-    "cmd, options, expected",
+    "cmd, options, args, expected",
     [
-        (None, None, Expected(status=0, tokens=["Usage", "Options", "Commands"])),
-        (None, ["-h"], Expected(status=0, tokens=["Usage", "Options", "Commands"])),
-        (None, ["--help"], Expected(status=0, tokens=["Usage", "Options", "Commands"])),
+        (None, None, None, Expected(status=0, tokens=["Usage", "Options", "Commands"])),
+        (
+            None,
+            ["-h"],
+            None,
+            Expected(status=0, tokens=["Usage", "Options", "Commands"]),
+        ),
+        (
+            None,
+            ["--help"],
+            None,
+            Expected(status=0, tokens=["Usage", "Options", "Commands"]),
+        ),
         (
             None,
             ["--version"],
+            None,
             Expected(status=0, tokens=[spacy_model_manager.__version__]),
         ),
         (
             "install",
+            None,
             None,
             Expected(status=2, tokens=["Error: Missing argument '<model>'"]),
         ),
         (
             "upgrade",
             None,
+            None,
             Expected(status=2, tokens=["Error: Missing argument '<model>'"]),
         ),
         (
             "remove",
+            None,
             None,
             Expected(status=2, tokens=["Error: Missing argument '<model>'"]),
         ),
         (
             "list",
             None,
+            None,
             Expected(
                 status=0,
                 tokens=["spaCy model", "installed version", "available versions"],
             ),
         ),
-        ("install", [TEST_MODEL], Expected(status=0, tokens=["Installed", TEST_MODEL])),
         (
             "install",
-            [TEST_MODEL],
+            None,
+            TEST_MODEL,
+            Expected(status=0, tokens=["Installed", TEST_MODEL]),
+        ),
+        (
+            "install",
+            None,
+            TEST_MODEL,
             Expected(status=0, tokens=[f"Model {TEST_MODEL} already installed"]),
         ),
-        ("upgrade", [TEST_MODEL], Expected(status=0, tokens=["Installed", TEST_MODEL])),
-        ("remove", [TEST_MODEL], Expected(status=0, tokens=[])),
+        (
+            "install",
+            ["--model-version", "1.12.9"],
+            TEST_MODEL,
+            Expected(status=-1, tokens=[f"Unable to install spacy model {TEST_MODEL}"]),
+        ),
+        (
+            "upgrade",
+            None,
+            TEST_MODEL,
+            Expected(status=0, tokens=["Installed", TEST_MODEL]),
+        ),
+        ("remove", None, TEST_MODEL, Expected(status=0, tokens=[])),
     ],
 )
-def test_spacy_model(cli_runner, cmd, options, expected):
-    run_spacy_model_command(cmd, options, None, cli_runner, expected)
+def test_spacy_model(cli_runner, cmd, options, args, expected):
+    run_spacy_model_command(cmd, options, args, cli_runner, expected)
 
 
 @pytest.mark.parametrize(

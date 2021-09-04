@@ -29,16 +29,16 @@ def test_get_spacy_models_with_request_error():
 
 
 @pytest.mark.parametrize(
-    "patched,mock_object",
+    "version,patched,mock_object",
     [
-        ("spacy.cli.download", MagicMock(side_effect=SystemExit)),
-        ("spacy_model_manager.lib.reload", MagicMock(side_effect=ImportError)),
+        (None, "spacy.cli.download", MagicMock(side_effect=SystemExit)),
+        (None, "spacy_model_manager.lib.reload", MagicMock(side_effect=ImportError)),
+        ("3.1.0", "spacy_model_manager.lib.parse", MagicMock(side_effect=[0, 1])),
     ],
 )
-def test_install_spacy_model_with_download_error(zh_core_web_sm, patched, mock_object):
+def test_install_spacy_model_with_errors(zh_core_web_sm, version, patched, mock_object):
     with patch(patched, new=mock_object):
-        assert install_spacy_model(zh_core_web_sm) == -1
-        assert uninstall_spacy_model(zh_core_web_sm) == 0
+        assert install_spacy_model(model=zh_core_web_sm, version=version) == -1
 
 
 def test_remove_spacy_model_with_uninstall_error():
