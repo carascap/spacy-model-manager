@@ -46,13 +46,31 @@ To see a list of available models, type:
 (venv) user@host:~$ spacy-model list
 ```
 
-To install a specific version of an available model:
+To install an available model:
 
 ```shell
 (venv) user@host:~$ spacy-model install en_core_web_sm
 ```
 
-Note that a request to install a specific version will replace any existing version of that model, even if the existing version is newer.
+To install a specific version of an available model:
+
+```shell
+(venv) user@host:~$ spacy-model install en_core_web_sm --model-version 3.1.0
+```
+
+Note: requesting a model version that does not match the minor version of the spaCy package installed may result in dependency conflict messages and further errors. A request to install a specific version will replace any existing version of that model, even if the existing version is newer.
+
+To remove an installed model:
+
+```shell
+(venv) user@host:~$ spacy-model remove en_core_web_sm
+```
+
+To upgrade an installed model:
+
+```shell
+(venv) user@host:~$ spacy-model upgrade en_core_web_sm
+```
 
 ## License(s)
 
