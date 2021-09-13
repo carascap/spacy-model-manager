@@ -11,7 +11,7 @@ Python library and supporting utilities to parse and process PST and mbox email 
 
 ## Installation
 
-The spacy-model-manager package requires Python 3.7 or newer, and can be installed from the Python Package Index. Installing with **pip** will automatically install all required dependencies. A selection of environments we have tested follows:
+The spacy-model-manager package requires Python 3.7 or newer, and can be installed from PyPI (Python Package Index). Installing with **pip** will automatically install all required dependencies. A selection of environments we have tested follows:
 
 *   Ubuntu 20.04LTS and later releases require build-essential, python3, python3-pip, and python3-venv packages
 *   macOS 11 (and newer) releases require Xcode 13 (or newer), Xcode CLI tools, and Python 3 installed using Homebrew (or your preferred method)
@@ -24,7 +24,7 @@ Make sure pip is upgraded to the latest version:
 pip install --upgrade pip
 ```
 
-Install libratom:
+Install spacy-model-manager:
 ```shell
 pip install spacy-model-manager
 ```
