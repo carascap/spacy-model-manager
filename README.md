@@ -4,6 +4,7 @@ Command line utility to view, install, and upgrade spaCy models
 
 [![Build Status](https://github.com/carascap/spacy-model-manager/actions/workflows/test_suite.yml/badge.svg?branch=main)](https://github.com/carascap/spacy-model-manager/actions/workflows/test_suite.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/carascap/spacy-model-manager/branch/main/graph/badge.svg)](https://codecov.io/gh/carascap/spacy-model-manager)
+[![Maintainability](https://api.codeclimate.com/v1/badges/2877a5b2baf2db9ce50b/maintainability)](https://codeclimate.com/github/carascap/spacy-model-manager/maintainability)
 [![Twitter Follow](https://img.shields.io/twitter/follow/carascap.svg?style=social&label=Follow)](https://twitter.com/carascap)
 
 Python library and supporting utilities to parse and process PST and mbox email sources.
