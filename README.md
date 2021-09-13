@@ -39,7 +39,7 @@ The spacy-model-manager CLI provides a command line interface to determine which
 
 ## Model management
 
-New spaCy releases are generally accompanied by newly trained models. Using different versions of models over the same collection may produce different results. Depending on your workflow and needs, you may wish to install earlier versions of models, upgrade models that were previously installed, or install multiple models. The model command assists with these tasks.
+New spaCy releases are generally accompanied by newly trained models. Using different versions of models over the same collection may produce different results. Depending on your workflow and needs, you may wish to install earlier versions of models, upgrade models that were previously installed, or install multiple models. The spacy-model command assists with these tasks.
 
 To see a list of available models, type:
 
