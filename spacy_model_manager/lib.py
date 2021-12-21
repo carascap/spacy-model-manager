@@ -64,6 +64,7 @@ SPACY_MODEL_NAMES = [
     "ja_core_news_lg",
     "ja_core_news_md",
     "ja_core_news_sm",
+    "ja_core_news_trf",
     "lt_core_news_lg",
     "lt_core_news_md",
     "lt_core_news_sm",
