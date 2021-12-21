@@ -5,6 +5,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
+import spacy
+from packaging.version import parse as parse_version
 from spacy_model_manager.lib import (
     SPACY_MODEL_NAMES,
     SPACY_MODELS,
@@ -13,9 +15,15 @@ from spacy_model_manager.lib import (
     uninstall_spacy_model,
 )
 
+LATEST_TESTED_SPACY_VERSION = parse_version("3.2.1")
+
 
 def test_get_spacy_models():
-    assert sorted(get_spacy_models().keys()) == SPACY_MODEL_NAMES
+    if parse_version(spacy.__version__) < LATEST_TESTED_SPACY_VERSION:
+        assert set(get_spacy_models().keys()) <= set(SPACY_MODEL_NAMES)
+    else:
+        # Make sure our list stays up-to-date
+        assert set(get_spacy_models().keys()) == set(SPACY_MODEL_NAMES)
 
 
 def test_get_spacy_models_with_request_error():
