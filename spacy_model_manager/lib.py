@@ -11,8 +11,11 @@ import pkg_resources
 import requests
 import spacy
 from packaging.version import parse
+from rich.console import Console
 from spacy.util import run_command
 from tabulate import tabulate
+
+console = Console()
 
 # Spacy trained model names
 SPACY_MODEL_NAMES = [
@@ -155,7 +158,10 @@ def list_spacy_models() -> int:
     Print installed spaCy models
     """
 
-    releases = get_spacy_models()
+    with console.status(
+        "[bold green]Fetching available model versions...", spinner="dots"
+    ):
+        releases = get_spacy_models()
 
     # Sort the results by version name
     releases = list(releases.items())
@@ -203,9 +209,12 @@ def install_spacy_model(
     version_suffix, direct_download = (f"-{version}", True) if version else ("", False)
 
     try:
-        spacy.cli.download(
-            f"{model}{version_suffix}", direct_download, False, "--quiet"
-        )
+        with console.status(
+            f"[bold green]Installing {model}{version_suffix}...", spinner="dots"
+        ):
+            spacy.cli.download(
+                f"{model}{version_suffix}", direct_download, False, "--quiet"
+            )
     except SystemExit:
         click.echo(
             click.style(
